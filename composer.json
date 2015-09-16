@@ -1,0 +1,31 @@
+{
+    "name": "stormpath/laravel-auth-driver",
+    "description": "Drop-in Auth Driver to use Stormpath services for Laravel",
+    "keywords": ["authentication", "stormpath", "authorization", "laravel"],
+    "license": "Apache 2.0",
+    "homepage": "http://stormpath.com",
+    "support": {
+        "issues": "https://github.com/stormpath/stormpath-laravel-auth-driver/issues",
+        "source": "https://github.com/stormpath/stormpath-laravel-auth-driver",
+        "email": "support@stormpath.com",
+        "irc": "irc://irc.freenode.org/stormpath",
+        "docs": "https://github.com/stormpath/stormpath-laravel-auth-driver/wiki",
+        "wiki": "https://github.com/stormpath/stormpath-laravel-auth-driver/wiki"
+    },
+    "authors": [
+        {
+            "name": "Brian Retterer",
+            "email": "brian@stormpath.com"
+        }
+    ],
+    "require": {
+        "stormpath/sdk": "^1.10@beta",
+        "illuminate/support": "~5.1"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "~4.8",
+        "mockery/mockery": "~0.9",
+        "fzaninotto/faker": "~1.5"
+    },
+    "minimum-stability": "beta"
+}
