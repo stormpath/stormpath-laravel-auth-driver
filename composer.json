@@ -27,5 +27,10 @@
         "mockery/mockery": "~0.9",
         "fzaninotto/faker": "~1.5"
     },
+    "autoload": {
+        "psr-4": {
+            "Stormpath\\": "src/"
+        }
+    },
     "minimum-stability": "beta"
 }
