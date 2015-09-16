@@ -1,5 +1,7 @@
 # STORMPATH - LARAVEL AUTH DRIVER
 
+## NOT READY FOR PRODUCTION OR DEVELOPMENT
+
 [![Build Status](https://travis-ci.org/stormpath/stormpath-laravel-auth-driver.svg)](https://travis-ci.org/stormpath/stormpath-laravel-auth-driver)
 [![Codecov](https://img.shields.io/codecov/c/github/codecov/example-python.svg)]()
 [![Total Downloads](https://poser.pugx.org/stormpath/stormpath-laravel-auth-driver/d/total.svg)](https://packagist.org/packages/stormpath/stormpath-laravel-auth-driver)
