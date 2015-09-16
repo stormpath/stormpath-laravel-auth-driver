@@ -20,6 +20,9 @@ matrix:
 
 sudo: false
 
+before_install:
+  - pip install --user codecov
+
 install:
   - if [[ $setup = 'basic' ]]; then travis_retry composer install --no-interaction --prefer-source; fi
   - if [[ $setup = 'stable' ]]; then travis_retry composer update --prefer-source --no-interaction --prefer-stable; fi
@@ -28,4 +31,4 @@ install:
 script: vendor/bin/phpunit
 
 after_success:
-  - bash <(curl -s https://codecov.io/bash)
+  - codecov
