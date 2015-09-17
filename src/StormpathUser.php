@@ -3,13 +3,14 @@
 namespace Stormpath;
 
 use Illuminate\Contracts\Auth\Authenticatable;
+use Stormpath\Resource\Account;
 
 class StormpathUser implements Authenticatable
 {
 
     private $account;
 
-    public function __construct($account)
+    public function __construct(Account $account)
     {
 
         $this->account = $account;

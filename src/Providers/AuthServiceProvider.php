@@ -3,6 +3,7 @@
 namespace Stormpath\Providers;
 
 use Auth;
+use Stormpath\Client;
 use Stormpath\StormpathUserProvider;
 use Illuminate\Support\ServiceProvider;
 use Stormpath\Stormpath;
@@ -30,8 +31,8 @@ class AuthServiceProvider extends ServiceProvider
     public function register()
     {
         $this->app->singleton('stormpath.client', function ($app) {
-            \Stormpath\Client::$apiKeyProperties = "apiKey.id=".env('STORMPATH_ID')."\napiKey.secret=".env('STORMPATH_SECRET');
-            return \Stormpath\Client::getInstance();
+            Client::$apiKeyProperties = "apiKey.id=".env('STORMPATH_ID')."\napiKey.secret=".env('STORMPATH_SECRET');
+            return Client::getInstance();
         });
 
         $this->app->singleton('stormpath.application', function ($app) {
