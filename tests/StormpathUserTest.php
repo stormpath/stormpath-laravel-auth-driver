@@ -71,23 +71,21 @@ class StormpathUserTest extends PHPUnit_Framework_TestCase
     }
 
     /**
-     *
+     * @test
      * @covers Stormpath\StormpathUser::setRememberToken
      */
     public function it_will_set_remember_token_on_the_account()
     {
-        $customData = m::mock('Stormpath\\Resource\\CustomData');
-        $customData->shouldReceive('getProperty')->with('rememberToken')->andReturnNull();
+        $customData = m::mock('CustomDataStub');
+        $customData->shouldReceive('save')->andReturnNull();
         self::$account->shouldReceive('getCustomData')->andReturn($customData);
-        $this->assertNull(self::$spUser->getRememberToken());
-
-        $customData->shouldAllowMockingProtectedMethods()->shouldReceive('setProperty');
-        $customData->shouldReceive('save')->once()->andReturn($customData);
-        $customData->shouldReceive('setProperty')->with('rememberToken')->andReturn('token111');
-
         self::$spUser->setRememberToken('token123');
-
         $this->assertEquals('token123', self::$spUser->getRememberToken());
 
     }
+}
+
+class CustomDataStub
+{
+    public function save() {}
 }
