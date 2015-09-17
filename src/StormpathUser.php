@@ -8,8 +8,15 @@ use Stormpath\Resource\Account;
 class StormpathUser implements Authenticatable
 {
 
+    /**
+     * @var Account
+     */
     private $account;
 
+    /**
+     * @param Account $account
+     * @codeCoverageIgnore
+     */
     public function __construct(Account $account)
     {
 
@@ -20,6 +27,7 @@ class StormpathUser implements Authenticatable
      * Get the unique identifier for the user.
      *
      * @return mixed
+     * @since 0.1.0
      */
     public function getAuthIdentifier()
     {
@@ -32,6 +40,7 @@ class StormpathUser implements Authenticatable
      * will not be set up to return the password for users.
      *
      * @return false
+     * @since 0.1.0
      */
     public function getAuthPassword()
     {
@@ -42,6 +51,7 @@ class StormpathUser implements Authenticatable
      * Get the token value for the "remember me" session.
      *
      * @return string
+     * @since 0.1.0
      */
     public function getRememberToken()
     {
@@ -55,6 +65,7 @@ class StormpathUser implements Authenticatable
      *
      * @param  string $value
      * @return void
+     * @since 0.1.0
      */
     public function setRememberToken($value)
     {
@@ -68,14 +79,11 @@ class StormpathUser implements Authenticatable
      * Get the column name for the "remember me" token.
      *
      * @return string
+     * @since 0.1.0
      */
     public function getRememberTokenName()
     {
         return 'rememberToken';
     }
 
-    public function __get($property)
-    {
-        return $this->account->getProperty($property);
-    }
 }

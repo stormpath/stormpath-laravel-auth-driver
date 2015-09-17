@@ -8,19 +8,23 @@ class StormpathUserTest extends PHPUnit_Framework_TestCase
 
     protected static $spUser;
 
-    public static function setUpBeforeClass()
+    public function setUp()
     {
-        self::$account = m::mock('Stormpath\\Resource\\Account');
+        self::$account = m::mock('Stormpath\\Resource\\Account')->makePartial();
+        self::$account->__construct();
         self::$spUser = new \Stormpath\StormpathUser(self::$account);
     }
 
     public function tearDown()
     {
         m::close();
+        self::$account = null;
+        self::$spUser = null;
     }
 
     /**
      * @test
+     * @covers Stormpath\StormpathUser::getAuthIdentifier
      */
     public function it_will_return_auth_identifier_of_the_account()
     {
@@ -34,6 +38,7 @@ class StormpathUserTest extends PHPUnit_Framework_TestCase
 
     /**
      * @test
+     * @covers Stormpath\StormpathUser::getAuthPassword
      */
     public function it_will_return_false_if_get_auth_password_is_called()
     {
@@ -44,6 +49,7 @@ class StormpathUserTest extends PHPUnit_Framework_TestCase
 
     /**
      * @test
+     * @covers Stormpath\StormpathUser::getRememberTokenName
      */
     public function it_will_get_the_remember_token_name()
     {
@@ -52,4 +58,36 @@ class StormpathUserTest extends PHPUnit_Framework_TestCase
         $this->assertEquals('rememberToken', $tokenName, 'The remember token name was not retrieved correctly!');
     }
 
+    /**
+     * @test
+     * @covers Stormpath\StormpathUser::getRememberToken
+     */
+    public function it_will_get_remember_token_from_custom_data_of_the_account()
+    {
+        $customData = m::mock('Stormpath\\Resource\\CustomData');
+        $customData->shouldReceive('getProperty')->with('rememberToken')->andReturn('token');
+        self::$account->shouldReceive('getCustomData')->andReturn($customData);
+        $this->assertEquals('token', self::$spUser->getRememberToken(), 'The remember token was not retrieved correctly!');
+    }
+
+    /**
+     *
+     * @covers Stormpath\StormpathUser::setRememberToken
+     */
+    public function it_will_set_remember_token_on_the_account()
+    {
+        $customData = m::mock('Stormpath\\Resource\\CustomData');
+        $customData->shouldReceive('getProperty')->with('rememberToken')->andReturnNull();
+        self::$account->shouldReceive('getCustomData')->andReturn($customData);
+        $this->assertNull(self::$spUser->getRememberToken());
+
+        $customData->shouldAllowMockingProtectedMethods()->shouldReceive('setProperty');
+        $customData->shouldReceive('save')->once()->andReturn($customData);
+        $customData->shouldReceive('setProperty')->with('rememberToken')->andReturn('token111');
+
+        self::$spUser->setRememberToken('token123');
+
+        $this->assertEquals('token123', self::$spUser->getRememberToken());
+
+    }
 }
