@@ -6,7 +6,6 @@
          stopOnFailure="false"
          bootstrap="phpunit.php"
          processIsolation="false"
-         forceCoversAnnotation="true"
          backupStaticAttributes="false"
          convertErrorsToExceptions="true"
          convertNoticesToExceptions="true"

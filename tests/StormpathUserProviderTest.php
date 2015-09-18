@@ -25,7 +25,6 @@ class StormpathUserProviderTest extends PHPUnit_Framework_TestCase
 
     /**
      * @test
-     * @cover Stormpath\StormpathUserProvider::retrieveByTokenId
      */
     public function it_retrieves_a_stormpath_user_by_id()
     {
