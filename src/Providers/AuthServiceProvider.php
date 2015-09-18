@@ -37,7 +37,7 @@ class AuthServiceProvider extends ServiceProvider
     public function register()
     {
         $this->app->singleton('stormpath.client', function ($app) {
-            Client::$apiKeyProperties = "apiKey.id=".config('stormpath.id');."\napiKey.secret=".config('stormpath.secret');
+            Client::$apiKeyProperties = "apiKey.id=".config('stormpath.id')."\napiKey.secret=".config('stormpath.secret');
             return Client::getInstance();
         });
 
