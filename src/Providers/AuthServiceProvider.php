@@ -7,7 +7,9 @@ use Stormpath\Client;
 use Stormpath\StormpathUserProvider;
 use Illuminate\Support\ServiceProvider;
 use Stormpath\Stormpath;
-
+/**
+ * @codeCoverageIgnore
+ */
 class AuthServiceProvider extends ServiceProvider
 {
     /**
