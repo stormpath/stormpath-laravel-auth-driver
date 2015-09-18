@@ -18,12 +18,14 @@ class StormpathUserProviderTest extends PHPUnit_Framework_TestCase
         self::$application->__construct();
         self::$account = m::mock('Stormpath\\Resource\\Account')->makePartial();
         self::$account->__construct();
-        self::$account->href = '123';
     }
 
     public function tearDown()
     {
         m::close();
+        self::$client = null;
+        self::$application = null;
+        self::$account = null;
     }
     
     /**
@@ -106,26 +108,88 @@ class StormpathUserProviderTest extends PHPUnit_Framework_TestCase
         $valid = $provider->validateCredentials($user, ['email' => 'test@test.com', 'password' => 'foo']);
 
         $this->assertFalse($valid);
+
     }
 
-
-
-
-
-}
-
-
-class StormpathUserStub {}
-
-class AthenticationResultStub
-{
-    public $account;
-}
-
-class AccountStub
-{
-    public function getHref()
+    /**
+     * @test
+     */
+    public function it_validates_credentials_and_returns_false_if_exception_is_thrown()
     {
-        return '123';
+        $authResult = m::mock('Stormpath\\Resource\\AuthenticationResult');
+        self::$application->shouldReceive('authenticate')->andThrow('Exception', 'Some Exception');
+
+        $user = m::mock('Illuminate\Contracts\Auth\Authenticatable');
+        $user->shouldReceive('getAuthIdentifier')->andReturnNull();
+
+        $provider = new \Stormpath\StormpathUserProvider(self::$client, self::$application);
+        $valid = $provider->validateCredentials($user, ['email' => 'test@test.com', 'password' => 'foo']);
+
+        $this->assertFalse($valid);
+
     }
+
+    /**
+     * @test
+     */
+    public function it_can_retrieve_a_user_by_remember_token()
+    {
+        $customData = m::mock('Stormpath\\Resource\\CustomData')->makePartial();
+        $customData->__construct();
+        $customData->shouldReceive('getProperty')->with('rememberToken')->andReturn('456');
+
+        self::$client->shouldReceive('get')->andReturn(self::$account);
+        self::$account->shouldReceive('getCustomData')->andReturn($customData);
+
+        $provider = new \Stormpath\StormpathUserProvider(self::$client, self::$application);
+        $user = $provider->retrieveByToken('123', '456');
+
+        $this->assertInstanceOf('Stormpath\StormpathUser', $user);
+    }
+
+    /**
+     * @test
+     */
+    public function it_returns_null_if_user_not_found_with_token()
+    {
+        $customData = m::mock('Stormpath\\Resource\\CustomData')->makePartial();
+        $customData->__construct();
+        $customData->shouldReceive('getProperty')->with('rememberToken')->andReturnNull();
+
+        self::$client->shouldReceive('get')->andReturn(self::$account);
+        self::$account->shouldReceive('getCustomData')->andReturn($customData);
+
+        $provider = new \Stormpath\StormpathUserProvider(self::$client, self::$application);
+        $user = $provider->retrieveByToken('123', '456');
+
+        $this->assertNull($user);
+    }
+
+    /**
+     * @test
+     */
+    public function it_can_update_remember_token()
+    {
+        self::$client->shouldReceive('get')->andReturn(self::$account);
+        $user = m::mock('Illuminate\Contracts\Auth\Authenticatable');
+        $user->shouldReceive('getAuthIdentifier')->andReturnNull();
+
+        $customData = m::mock('Stormpath\\Resource\\CustomData')->makePartial();
+        $customData->shouldAllowMockingProtectedMethods();
+        $customData->__construct();
+        $customData->shouldReceive('getProperty')->with('rememberToken');
+
+        $provider = new \Stormpath\StormpathUserProvider(self::$client, self::$application);
+
+        $provider->updateRememberToken($user, 'tokenTest');
+        
+    }
+
+
+
+
+
 }
+
+
+

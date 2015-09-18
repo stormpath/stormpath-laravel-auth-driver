@@ -80,7 +80,3 @@ class StormpathUserTest extends PHPUnit_Framework_TestCase
     }
 }
 
-class CustomDataStub
-{
-    public function save() {}
-}

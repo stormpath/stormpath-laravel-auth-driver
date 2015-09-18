@@ -39,8 +39,8 @@ class StormpathUserProvider implements UserProvider {
     public function retrieveByToken($identifier, $token)
     {
         $account = $this->client->get($identifier, \Stormpath\Stormpath::APPLICATION);
-        $customData = $account->customData;
 
+        $customData = $account->customData;
         if(!$customData->rememberToken || $customData->rememberToken != $token)
             return null;
 
@@ -90,7 +90,7 @@ class StormpathUserProvider implements UserProvider {
             $result = $this->application->authenticate($credentials['email'], $credentials['password']);
             return $result->account->getHref() == $user->getAuthIdentifier();
         } catch (\Exception $e) {
-            return null;
+            return false;
         }
 
 
