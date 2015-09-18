@@ -1,7 +1,5 @@
 <?php
-/**
- * @codeCoverageIgnore
- */
+
 namespace Stormpath\Providers;
 
 use Auth;
