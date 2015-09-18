@@ -24,7 +24,4 @@
             <file>./src/Providers/AuthServiceProvider.php</file>
         </exclude>
     </filter>
-    <logging>
-        <log type="coverage-html" target="./code-coverage"  charset="UTF-8" yui="true" lowUpperBound="50" highLowerBound="90"/>
-    </logging>
 </phpunit>
