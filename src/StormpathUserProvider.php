@@ -41,7 +41,7 @@ class StormpathUserProvider implements UserProvider {
         $account = $this->client->get($identifier, \Stormpath\Stormpath::APPLICATION);
         $customData = $account->customData;
 
-        if(!$customData->remember_token || $customData->remember_token != $token)
+        if(!$customData->rememberToken || $customData->rememberToken != $token)
             return null;
 
         return new StormpathUser($account);
@@ -58,7 +58,7 @@ class StormpathUserProvider implements UserProvider {
     {
         $account = $this->client->get($user->getAuthIdentifier(), \Stormpath\Stormpath::APPLICATION);
         $customData = $account->customData;
-        $customData->remember_token = $token;
+        $customData->rememberToken = $token;
     }
 
     /**
@@ -73,9 +73,8 @@ class StormpathUserProvider implements UserProvider {
             $result = $this->application->authenticate($credentials['email'], $credentials['password']);
             return new StormpathUser($result->account);
         } catch (\Exception $e) {
-
+            return null;
         }
-        return null;
     }
 
     /**
@@ -91,9 +90,9 @@ class StormpathUserProvider implements UserProvider {
             $result = $this->application->authenticate($credentials['email'], $credentials['password']);
             return $result->account->getHref() == $user->getAuthIdentifier();
         } catch (\Exception $e) {
+            return null;
         }
 
-        return null;
 
     }
 }
