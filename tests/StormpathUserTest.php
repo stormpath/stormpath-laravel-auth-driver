@@ -24,7 +24,7 @@ class StormpathUserTest extends PHPUnit_Framework_TestCase
 
     /**
      * @test
-     * @covers Stormpath\StormpathUser::getAuthIdentifier
+     * @cover Stormpath\StormpathUser::getAuthIdentifier
      */
     public function it_will_return_auth_identifier_of_the_account()
     {
@@ -38,7 +38,7 @@ class StormpathUserTest extends PHPUnit_Framework_TestCase
 
     /**
      * @test
-     * @covers Stormpath\StormpathUser::getAuthPassword
+     * @cover Stormpath\StormpathUser::getAuthPassword
      */
     public function it_will_return_false_if_get_auth_password_is_called()
     {
@@ -49,7 +49,7 @@ class StormpathUserTest extends PHPUnit_Framework_TestCase
 
     /**
      * @test
-     * @covers Stormpath\StormpathUser::getRememberTokenName
+     * @cover Stormpath\StormpathUser::getRememberTokenName
      */
     public function it_will_get_the_remember_token_name()
     {
@@ -60,7 +60,7 @@ class StormpathUserTest extends PHPUnit_Framework_TestCase
 
     /**
      * @test
-     * @covers Stormpath\StormpathUser::getRememberToken
+     * @cover Stormpath\StormpathUser::getRememberToken
      */
     public function it_will_get_remember_token_from_custom_data_of_the_account()
     {
@@ -72,7 +72,7 @@ class StormpathUserTest extends PHPUnit_Framework_TestCase
 
     /**
      * @test
-     * @covers Stormpath\StormpathUser::setRememberToken
+     * @cover Stormpath\StormpathUser::setRememberToken
      */
     public function it_will_set_remember_token_on_the_account()
     {
