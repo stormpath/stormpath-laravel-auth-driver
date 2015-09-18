@@ -6,6 +6,6 @@ return [
 
     "secret" => env("STORMPATH_SECRET", "YourStormpathSecret"),
 
-    "applicaiton" => env("STORMPATH_APPLICATION", "YourStormpathApplicationId")
+    "application" => env("STORMPATH_APPLICATION", "YourStormpathApplicationId")
 
 ];
