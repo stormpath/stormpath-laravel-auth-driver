@@ -2,7 +2,7 @@
 
 ## NOT READY FOR PRODUCTION OR DEVELOPMENT
 
-[![Build Status](https://travis-ci.org/stormpath/laravel-auth-driver.svg)](https://travis-ci.org/stormpath/laravel-auth-driver)
+[![Build Status](https://travis-ci.org/stormpath/stormpath-laravel-auth-driver.svg)](https://travis-ci.org/stormpath/stormpath-laravel-auth-driver)
 [![Codecov](https://img.shields.io/codecov/c/github/stormpath/stormpath-laravel-auth-driver.svg)](https://codecov.io/github/stormpath/stormpath-laravel-auth-driver)
 [![Total Downloads](https://poser.pugx.org/stormpath/laravel-auth-driver/d/total.svg)](https://packagist.org/packages/stormpath/laravel-auth-driver)
 [![Latest Stable Version](https://poser.pugx.org/stormpath/laravel-auth-driver/v/stable.svg)](https://packagist.org/packages/stormpath/laravel-auth-driver)
