@@ -1,6 +1,6 @@
 # STORMPATH - LARAVEL AUTH DRIVER
 
-## NOT READY FOR PRODUCTION OR DEVELOPMENT
+## NOT READY FOR PRODUCTION
 
 [![Build Status](https://travis-ci.org/stormpath/stormpath-laravel-auth-driver.svg)](https://travis-ci.org/stormpath/stormpath-laravel-auth-driver)
 [![Codecov](https://img.shields.io/codecov/c/github/stormpath/stormpath-laravel-auth-driver.svg)](https://codecov.io/github/stormpath/stormpath-laravel-auth-driver)
