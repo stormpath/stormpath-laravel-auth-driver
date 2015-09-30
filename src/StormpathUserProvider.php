@@ -24,7 +24,7 @@ class StormpathUserProvider implements UserProvider {
      */
     public function retrieveById($identifier)
     {
-        $account = $this->client->get('accounts/'.$identifier, \Stormpath\Stormpath::APPLICATION);
+        $account = $this->client->get('accounts/'.$identifier, \Stormpath\Stormpath::ACCOUNT);
 
         return new StormpathUser($account);
     }
@@ -38,7 +38,7 @@ class StormpathUserProvider implements UserProvider {
      */
     public function retrieveByToken($identifier, $token)
     {
-        $account = $this->client->get('accounts/'.$identifier, \Stormpath\Stormpath::APPLICATION);
+        $account = $this->client->get('accounts/'.$identifier, \Stormpath\Stormpath::ACCOUNT);
 
         $customData = $account->customData;
         if(!$customData->rememberToken || $customData->rememberToken != $token)
@@ -56,7 +56,7 @@ class StormpathUserProvider implements UserProvider {
      */
     public function updateRememberToken(Authenticatable $user, $token)
     {
-        $account = $this->client->get('accounts/'.$user->getAuthIdentifier(), \Stormpath\Stormpath::APPLICATION);
+        $account = $this->client->get('accounts/'.$user->getAuthIdentifier(), \Stormpath\Stormpath::ACCOUNT);
         $customData = $account->customData;
         $customData->rememberToken = $token;
     }

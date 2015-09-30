@@ -34,7 +34,7 @@ class StormpathUserProviderTest extends PHPUnit_Framework_TestCase
     public function it_retrieves_by_id_and_returns_user()
     {
         $provider = new \Stormpath\StormpathUserProvider(self::$client, self::$application);
-        self::$client->shouldReceive('get')->once()->andReturn(self::$account);
+        self::$client->shouldReceive('get')->with('accounts/1', Stormpath\Stormpath::ACCOUNT)->once()->andReturn(self::$account);
         $user = $provider->retrieveById(1);
 
         $this->assertInstanceOf('Stormpath\StormpathUser', $user);
@@ -138,7 +138,7 @@ class StormpathUserProviderTest extends PHPUnit_Framework_TestCase
         $customData->__construct();
         $customData->shouldReceive('getProperty')->with('rememberToken')->andReturn('456');
 
-        self::$client->shouldReceive('get')->andReturn(self::$account);
+        self::$client->shouldReceive('get')->with('accounts/123', Stormpath\Stormpath::ACCOUNT)->andReturn(self::$account);
         self::$account->shouldReceive('getCustomData')->andReturn($customData);
 
         $provider = new \Stormpath\StormpathUserProvider(self::$client, self::$application);
@@ -156,7 +156,7 @@ class StormpathUserProviderTest extends PHPUnit_Framework_TestCase
         $customData->__construct();
         $customData->shouldReceive('getProperty')->with('rememberToken')->andReturnNull();
 
-        self::$client->shouldReceive('get')->andReturn(self::$account);
+        self::$client->shouldReceive('get')->with('accounts/123', Stormpath\Stormpath::ACCOUNT)->andReturn(self::$account);
         self::$account->shouldReceive('getCustomData')->andReturn($customData);
 
         $provider = new \Stormpath\StormpathUserProvider(self::$client, self::$application);
