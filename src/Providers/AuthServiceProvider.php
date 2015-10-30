@@ -40,7 +40,7 @@ class AuthServiceProvider extends ServiceProvider
     {
         $this->app->singleton('stormpath.client', function ($app) {
             Client::$apiKeyProperties = "apiKey.id=".config('stormpath.id')."\napiKey.secret=".config('stormpath.secret');
-            Client::$integration = self::INTEGRATION_NAME"/".self::INTEGRATION_VERSION;
+            Client::$integration = self::INTEGRATION_NAME."/".self::INTEGRATION_VERSION;
             return Client::getInstance();
         });
 

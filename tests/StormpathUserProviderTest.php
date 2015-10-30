@@ -15,14 +15,14 @@ class StormpathUserProviderTest extends TestCase
     {
         parent::setUpBeforeClass();
 
-        self::$application = \Stormpath\Resource\Application::instantiate(array('name' => microtime().'ApplicationTest', 'description' => 'Description of Main App', 'status' => 'enabled'));
+        self::$application = \Stormpath\Resource\Application::instantiate(array('name' => uniqid().'ApplicationTest', 'description' => 'Description of Main App', 'status' => 'enabled'));
         self::createResource(\Stormpath\Resource\Application::PATH, self::$application, array('createDirectory' => true));
 
         self::$account = \Stormpath\Resource\Account::instantiate(array('givenName' => 'Account Name',
             'middleName' => 'Middle Name',
             'surname' => 'Surname',
-            'username' => 'username'.time().microtime(),
-            'email' => 'username'.time().microtime().'@unknown123.kot',
+            'username' => 'username'.uniqid(),
+            'email' => 'username'.uniqid().'@unknown123.kot',
             'password' => 'superP4ss'));
         self::$application->createAccount(self::$account);
 
