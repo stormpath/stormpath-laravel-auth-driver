@@ -12,6 +12,8 @@ use Stormpath\Stormpath;
  */
 class AuthServiceProvider extends ServiceProvider
 {
+    const INTEGRATION_NAME = 'stormpath-laravel-auth-driver';
+    const INTEGRATION_VERSION = '0.1.0-alpha.3';
     /**
      * Perform post-registration booting of services.
      *
@@ -38,6 +40,7 @@ class AuthServiceProvider extends ServiceProvider
     {
         $this->app->singleton('stormpath.client', function ($app) {
             Client::$apiKeyProperties = "apiKey.id=".config('stormpath.id')."\napiKey.secret=".config('stormpath.secret');
+            Client::$integration = self::INTEGRATION_NAME"/".self::INTEGRATION_VERSION;
             return Client::getInstance();
         });
 

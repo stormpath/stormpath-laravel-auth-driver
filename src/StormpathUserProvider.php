@@ -4,6 +4,7 @@ namespace Stormpath;
 
 use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Contracts\Auth\UserProvider;
+use Stormpath\Resource\Account;
 
 class StormpathUserProvider implements UserProvider {
 
@@ -24,8 +25,7 @@ class StormpathUserProvider implements UserProvider {
      */
     public function retrieveById($identifier)
     {
-        $account = $this->client->get('accounts/'.$identifier, \Stormpath\Stormpath::ACCOUNT);
-
+        $account = Account::get($identifier);
         return new StormpathUser($account);
     }
 
@@ -38,7 +38,7 @@ class StormpathUserProvider implements UserProvider {
      */
     public function retrieveByToken($identifier, $token)
     {
-        $account = $this->client->get('accounts/'.$identifier, \Stormpath\Stormpath::ACCOUNT);
+        $account = Account::get($identifier);
 
         $customData = $account->customData;
         if(!$customData->rememberToken || $customData->rememberToken != $token)
@@ -56,7 +56,7 @@ class StormpathUserProvider implements UserProvider {
      */
     public function updateRememberToken(Authenticatable $user, $token)
     {
-        $account = $this->client->get('accounts/'.$user->getAuthIdentifier(), \Stormpath\Stormpath::ACCOUNT);
+        $account = Account::get($user->getAuthIdentifier());
         $customData = $account->customData;
         $customData->rememberToken = $token;
     }

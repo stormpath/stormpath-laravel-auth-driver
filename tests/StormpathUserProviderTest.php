@@ -2,40 +2,41 @@
 
 use Mockery as m;
 
-class StormpathUserProviderTest extends PHPUnit_Framework_TestCase
+class StormpathUserProviderTest extends TestCase
 {
-    protected static $client;
+    private static $application;
 
-    protected static $application;
+    private static $account;
 
-    protected static $account;
+    private static $provider;
 
 
-    public function setUp()
+    public static function setUpBeforeClass()
     {
-        self::$client = m::mock('Stormpath\\Client');
-        self::$application = m::mock('Stormpath\\Resource\\Application')->makePartial();
-        self::$application->__construct();
-        self::$account = m::mock('Stormpath\\Resource\\Account')->makePartial();
-        self::$account->__construct();
+        parent::setUpBeforeClass();
+
+        self::$application = \Stormpath\Resource\Application::instantiate(array('name' => 'ApplicationTest', 'description' => 'Description of Main App', 'status' => 'enabled'));
+        self::createResource(\Stormpath\Resource\Application::PATH, self::$application, array('createDirectory' => true));
+
+        self::$account = \Stormpath\Resource\Account::instantiate(array('givenName' => 'Account Name',
+            'middleName' => 'Middle Name',
+            'surname' => 'Surname',
+            'username' => 'username'.time(),
+            'email' => 'username'.time().'@unknown123.kot',
+            'password' => 'superP4ss'));
+        self::$application->createAccount(self::$account);
+
+        self::$provider = new \Stormpath\StormpathUserProvider(self::$client, self::$application);
+
     }
 
-    public function tearDown()
-    {
-        m::close();
-        self::$client = null;
-        self::$application = null;
-        self::$account = null;
-    }
-    
     /**
      * @test
      */
     public function it_retrieves_by_id_and_returns_user()
     {
-        $provider = new \Stormpath\StormpathUserProvider(self::$client, self::$application);
-        self::$client->shouldReceive('get')->with('accounts/1', Stormpath\Stormpath::ACCOUNT)->once()->andReturn(self::$account);
-        $user = $provider->retrieveById(1);
+
+        $user = self::$provider->retrieveById(self::$account->href);
 
         $this->assertInstanceOf('Stormpath\StormpathUser', $user);
     }
@@ -45,13 +46,11 @@ class StormpathUserProviderTest extends PHPUnit_Framework_TestCase
      */
     public function it_retrieves_by_credentials_and_returns_user()
     {
-        $authResult = m::mock('AthenticationResultStub');
-        $authResult->account = self::$account;
-        self::$application->shouldReceive('authenticate')->andReturn($authResult);
+        $user = self::$provider->retrieveByCredentials([
+            'email'=>self::$account->email,
+            'password'=>'superP4ss'
+        ]);
 
-
-        $provider = new \Stormpath\StormpathUserProvider(self::$client, self::$application);
-        $user = $provider->retrieveByCredentials(['email' => 'test@test.com', 'password' => 'foo']);
 
         $this->assertInstanceOf('Stormpath\StormpathUser', $user);
     }
@@ -61,13 +60,7 @@ class StormpathUserProviderTest extends PHPUnit_Framework_TestCase
      */
     public function it_retrieves_by_credentials_and_returns_null_if_account_not_found()
     {
-        $authResult = m::mock('AthenticationResultStub');
-        $authResult->account = null;
-        self::$application->shouldReceive('authenticate')->andReturn($authResult);
-
-
-        $provider = new \Stormpath\StormpathUserProvider(self::$client, self::$application);
-        $user = $provider->retrieveByCredentials(['email' => 'test@test.com', 'password' => 'foo']);
+        $user = self::$provider->retrieveByCredentials(['email' => 'test@test.com', 'password' => 'foo']);
 
         $this->assertNull($user);
     }
@@ -77,16 +70,18 @@ class StormpathUserProviderTest extends PHPUnit_Framework_TestCase
      */
     public function it_validates_credentials_and_returns_true_if_valid()
     {
-        $authResult = m::mock('AthenticationResultStub');
-        $authResult->account = m::mock('AccountStub')->makePartial();
-        self::$application->shouldReceive('authenticate')->andReturn($authResult);
+        $user = self::$provider->retrieveByCredentials([
+            'email'=>self::$account->email,
+            'password'=>'superP4ss'
+        ]);
 
-        $user = m::mock('Illuminate\Contracts\Auth\Authenticatable');
-        $user->shouldReceive('getAuthIdentifier')->once()->andReturn('123');
-
-
-        $provider = new \Stormpath\StormpathUserProvider(self::$client, self::$application);
-        $valid = $provider->validateCredentials($user, ['email' => 'test@test.com', 'password' => 'foo']);
+        $valid = self::$provider->validateCredentials(
+            $user,
+            [
+                'email' => self::$account->email,
+                'password' => 'superP4ss'
+            ]
+        );
 
         $this->assertTrue($valid);
     }
@@ -96,17 +91,18 @@ class StormpathUserProviderTest extends PHPUnit_Framework_TestCase
      */
     public function it_validates_credentials_and_returns_false_if_not_valid()
     {
-        $authResult = m::mock('AthenticationResultStub');
-        $authResult->account = m::mock('AccountStub')->makePartial();
-        self::$application->shouldReceive('authenticate')->andReturn($authResult);
+        $user = self::$provider->retrieveByCredentials([
+            'email'=>self::$account->email,
+            'password'=>'superP4ss'
+        ]);
 
-        $user = m::mock('Illuminate\Contracts\Auth\Authenticatable');
-        $user->shouldReceive('getAuthIdentifier')->once()->andReturn('456');
-
-
-        $provider = new \Stormpath\StormpathUserProvider(self::$client, self::$application);
-        $valid = $provider->validateCredentials($user, ['email' => 'test@test.com', 'password' => 'foo']);
-
+        $valid = self::$provider->validateCredentials(
+            $user,
+            [
+                'email' => 'test@email.com',
+                'password' => 'superP4ss'
+            ]
+        );
         $this->assertFalse($valid);
 
     }
@@ -116,14 +112,23 @@ class StormpathUserProviderTest extends PHPUnit_Framework_TestCase
      */
     public function it_validates_credentials_and_returns_false_if_exception_is_thrown()
     {
-        $authResult = m::mock('Stormpath\\Resource\\AuthenticationResult');
-        self::$application->shouldReceive('authenticate')->andThrow('Exception', 'Some Exception');
+        $application = m::mock('Stormpath\\Resource\\Application')->makePartial();
+        $application->__construct();
+        $application->shouldReceive('authenticate')->andThrow('Exception', 'Some Exception');
 
-        $user = m::mock('Illuminate\Contracts\Auth\Authenticatable');
-        $user->shouldReceive('getAuthIdentifier')->andReturnNull();
 
-        $provider = new \Stormpath\StormpathUserProvider(self::$client, self::$application);
-        $valid = $provider->validateCredentials($user, ['email' => 'test@test.com', 'password' => 'foo']);
+        $user = self::$provider->retrieveByCredentials([
+            'email'=>self::$account->email,
+            'password'=>'superP4ss'
+        ]);
+
+        $valid = self::$provider->validateCredentials(
+            $user,
+            [
+                'email' => 'test@email.com',
+                'password' => 'superP4ss'
+            ]
+        );
 
         $this->assertFalse($valid);
 
@@ -134,17 +139,16 @@ class StormpathUserProviderTest extends PHPUnit_Framework_TestCase
      */
     public function it_can_retrieve_a_user_by_remember_token()
     {
-        $customData = m::mock('Stormpath\\Resource\\CustomData')->makePartial();
-        $customData->__construct();
-        $customData->shouldReceive('getProperty')->with('rememberToken')->andReturn('456');
+        $user = self::$provider->retrieveByCredentials([
+            'email'=>self::$account->email,
+            'password'=>'superP4ss'
+        ]);
 
-        self::$client->shouldReceive('get')->with('accounts/123', Stormpath\Stormpath::ACCOUNT)->andReturn(self::$account);
-        self::$account->shouldReceive('getCustomData')->andReturn($customData);
+        self::$provider->updateRememberToken($user, '1234');
 
-        $provider = new \Stormpath\StormpathUserProvider(self::$client, self::$application);
-        $user = $provider->retrieveByToken('123', '456');
+        $userToTest = self::$provider->retrieveByToken($user->getAuthIdentifier(), '1234');
 
-        $this->assertInstanceOf('Stormpath\StormpathUser', $user);
+        $this->assertInstanceOf('Stormpath\StormpathUser', $userToTest);
     }
 
     /**
@@ -152,17 +156,16 @@ class StormpathUserProviderTest extends PHPUnit_Framework_TestCase
      */
     public function it_returns_null_if_user_not_found_with_token()
     {
-        $customData = m::mock('Stormpath\\Resource\\CustomData')->makePartial();
-        $customData->__construct();
-        $customData->shouldReceive('getProperty')->with('rememberToken')->andReturnNull();
+        $user = self::$provider->retrieveByCredentials([
+            'email'=>self::$account->email,
+            'password'=>'superP4ss'
+        ]);
 
-        self::$client->shouldReceive('get')->with('accounts/123', Stormpath\Stormpath::ACCOUNT)->andReturn(self::$account);
-        self::$account->shouldReceive('getCustomData')->andReturn($customData);
+        self::$provider->updateRememberToken($user, '1234');
 
-        $provider = new \Stormpath\StormpathUserProvider(self::$client, self::$application);
-        $user = $provider->retrieveByToken('123', '456');
+        $userToTest = self::$provider->retrieveByToken($user->getAuthIdentifier(), '2345');
 
-        $this->assertNull($user);
+        $this->assertNull($userToTest);
     }
 
     /**
@@ -170,26 +173,47 @@ class StormpathUserProviderTest extends PHPUnit_Framework_TestCase
      */
     public function it_can_update_remember_token()
     {
-        self::$client->shouldReceive('get')->andReturn(self::$account);
-        $user = m::mock('Illuminate\Contracts\Auth\Authenticatable');
-        $user->shouldReceive('getAuthIdentifier')->andReturnNull();
+        $user = self::$provider->retrieveByCredentials([
+            'email'=>self::$account->email,
+            'password'=>'superP4ss'
+        ]);
 
-        $customData = m::mock('Stormpath\\Resource\\CustomData')->makePartial();
-        $customData->shouldAllowMockingProtectedMethods();
-        $customData->__construct();
-        $customData->shouldReceive('getProperty')->with('rememberToken');
+        self::$provider->updateRememberToken($user, '1234');
 
-        $provider = new \Stormpath\StormpathUserProvider(self::$client, self::$application);
+        $userToTest = self::$provider->retrieveByToken($user->getAuthIdentifier(), '1234');
 
-        $provider->updateRememberToken($user, 'tokenTest');
-        
+        $this->assertInstanceOf('Stormpath\StormpathUser', $userToTest);
+
+        self::$provider->updateRememberToken($user, '1928374');
+
+        $userToTest2 = self::$provider->retrieveByToken($user->getAuthIdentifier(), '1928374');
+
+        $this->assertInstanceOf('Stormpath\StormpathUser', $userToTest2);
+
     }
 
+    public static function tearDownAfterClass()
+    {
 
+        $accountStoreMappings = self::$application->accountStoreMappings;
 
+        if ($accountStoreMappings)
+        {
+            foreach($accountStoreMappings as $asm)
+            {
+                $accountStore = $asm->accountStore;
+                $asm->delete();
+                $accountStore->delete();
+            }
+        }
 
+        self::$application->delete();
+
+        self::$client = null;
+        self::$application = null;
+        self::$account = null;
+
+        parent::tearDownAfterClass();
+    }
 
 }
-
-
-
