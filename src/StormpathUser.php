@@ -86,9 +86,48 @@ class StormpathUser implements Authenticatable
         return 'rememberToken';
     }
 
-    public function __get($property)
+    /**
+     * Dynamically access the user's account
+     *
+     * @param  string  $key
+     * @return mixed
+     */
+    public function __get($key)
     {
-        return $this->account->$property;
+        return $this->account->$key;
     }
 
+    /**
+     * Dynamically set an attribute on the user.
+     *
+     * @param  string  $key
+     * @param  mixed  $value
+     * @return void
+     */
+    public function __set($key, $value)
+    {
+        $this->account->$key = $value;
+    }
+
+    /**
+     * Dynamically check if a value is set on the user.
+     *
+     * @param  string  $key
+     * @return bool
+     */
+    public function __isset($key)
+    {
+        return isset($this->account->$key);
+    }
+
+    /**
+     * Dynamically unset a value on the user.
+     *
+     * @param  string  $key
+     * @return void
+     */
+    public function __unset($key)
+    {
+        unset($this->account->$key);
+    }
 }
