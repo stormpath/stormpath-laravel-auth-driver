@@ -2,9 +2,9 @@
 
 class TestCase extends \PHPUnit_Framework_TestCase
 {
-    const STORMPATH_SDK_TEST_API_KEY_FILE_LOCATION = 'STORMPATH_SDK_TEST_API_KEY_FILE_LOCATION';
-    const STORMPATH_SDK_TEST_API_KEY_ID = 'STORMPATH_SDK_TEST_API_KEY_ID';
-    const STORMPATH_SDK_TEST_API_KEY_SECRET = 'STORMPATH_SDK_TEST_API_KEY_SECRET';
+    const STORMPATH_KEY_FILE_LOCATION = 'STORMPATH_KEY_FILE_LOCATION';
+    const STORMPATH_ID = 'STORMPATH_ID';
+    const STORMPATH_SECRET = 'STORMPATH_SECRET';
     const BASE_URL = 'STORMPATH_BASE_URL';
     protected static $client;
 
@@ -17,29 +17,29 @@ class TestCase extends \PHPUnit_Framework_TestCase
 
         $apiKeyProperties = null;
         $apiKeyFileLocation = null;
-        if (array_key_exists(self::STORMPATH_SDK_TEST_API_KEY_FILE_LOCATION, $_SERVER) or array_key_exists(self::STORMPATH_SDK_TEST_API_KEY_FILE_LOCATION, $_ENV))
+        if (array_key_exists(self::STORMPATH_KEY_FILE_LOCATION, $_SERVER) or array_key_exists(self::STORMPATH_KEY_FILE_LOCATION, $_ENV))
         {
-            $apiKeyFileLocation = array_key_exists(self::STORMPATH_SDK_TEST_API_KEY_FILE_LOCATION, $_SERVER) ?
-                $_SERVER[self::STORMPATH_SDK_TEST_API_KEY_FILE_LOCATION] :
-                $_ENV[self::STORMPATH_SDK_TEST_API_KEY_FILE_LOCATION];
+            $apiKeyFileLocation = array_key_exists(self::STORMPATH_KEY_FILE_LOCATION, $_SERVER) ?
+                $_SERVER[self::STORMPATH_KEY_FILE_LOCATION] :
+                $_ENV[self::STORMPATH_KEY_FILE_LOCATION];
 
-        } elseif ((array_key_exists(self::STORMPATH_SDK_TEST_API_KEY_ID, $_SERVER) or array_key_exists(self::STORMPATH_SDK_TEST_API_KEY_ID, $_ENV))
-            and (array_key_exists(self::STORMPATH_SDK_TEST_API_KEY_SECRET, $_SERVER) or array_key_exists(self::STORMPATH_SDK_TEST_API_KEY_SECRET, $_ENV)))
+        } elseif ((array_key_exists(self::STORMPATH_ID, $_SERVER) or array_key_exists(self::STORMPATH_ID, $_ENV))
+            and (array_key_exists(self::STORMPATH_SECRET, $_SERVER) or array_key_exists(self::STORMPATH_SECRET, $_ENV)))
         {
-            $apiKeyId = array_key_exists(self::STORMPATH_SDK_TEST_API_KEY_ID, $_SERVER) ?
-                $_SERVER[self::STORMPATH_SDK_TEST_API_KEY_ID] :
-                $_ENV[self::STORMPATH_SDK_TEST_API_KEY_ID];
+            $apiKeyId = array_key_exists(self::STORMPATH_ID, $_SERVER) ?
+                $_SERVER[self::STORMPATH_ID] :
+                $_ENV[self::STORMPATH_ID];
 
-            $apiKeySecret = array_key_exists(self::STORMPATH_SDK_TEST_API_KEY_SECRET, $_SERVER) ?
-                $_SERVER[self::STORMPATH_SDK_TEST_API_KEY_SECRET] :
-                $_ENV[self::STORMPATH_SDK_TEST_API_KEY_SECRET];
+            $apiKeySecret = array_key_exists(self::STORMPATH_SECRET, $_SERVER) ?
+                $_SERVER[self::STORMPATH_SECRET] :
+                $_ENV[self::STORMPATH_SECRET];
 
             $apiKeyProperties = "apiKey.id=$apiKeyId\napiKey.secret=$apiKeySecret";
         }
         else
         {
-            $message = "The '" . self::STORMPATH_SDK_TEST_API_KEY_FILE_LOCATION . "' environment variable needs to be set before running the tests.\n" .
-                "Alternatively, you can set the '" .self::STORMPATH_SDK_TEST_API_KEY_ID . "' and '" .self::STORMPATH_SDK_TEST_API_KEY_SECRET . "' environment " .
+            $message = "The '" . self::STORMPATH_KEY_FILE_LOCATION . "' environment variable needs to be set before running the tests.\n" .
+                "Alternatively, you can set the '" .self::STORMPATH_ID . "' and '" .self::STORMPATH_SECRET . "' environment " .
                 "variables to make the tests run.";
             throw new \InvalidArgumentException($message);
         }
